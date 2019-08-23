@@ -6,20 +6,20 @@ Joguinho de lutinha do Gamux
 
 
 *Art Tasks*
-  1. Cenário para testes
-  2. Bonequinho (dummie) para testes (sprite simples pra testar movimentação e animação do personagem)
+- [ ] Cenário para testes
+- [ ] Bonequinho (dummie) para testes (sprite simples pra testar movimentação e animação do personagem)
 
 *CODE tasks*
-  1. ~~Criar um marcador visual/sonoro de tempo (metrônomo) que marca 1 segundo e um botão que se precionado no tempo marcado printa 1 e se precionado no tempo errado printa 0~~
-  2. Colocar um quadrado pulando quando o usuário acertar o tempo do metrônomo
-  3. Metrônomo 2.0: marcar o contra-tempo (entre dois tempos certos, mas bem menor)
-  4. Efeito de som no metrônomo
+- [x] Criar um marcador visual/sonoro de tempo (metrônomo) que marca 1 segundo e um botão que se precionado no tempo marcado printa 1 e se precionado no tempo errado printa 0
+- [ ] Colocar um quadrado pulando quando o usuário acertar o tempo do metrônomo
+- [ ] Metrônomo 2.0: marcar o contra-tempo (entre dois tempos certos, mas bem menor)
+- [ ] Efeito de som no metrônomo
 
 *SOUND Tasks*
-  1. Nenhum por enquanto :)
+- [x] Nenhum por enquanto :)
 
 *GAME DESIGN Tasks*
-  1. Ideias estão no cartão de informações do hacknplan
+- [ ] Ideias estão no cartão de informações do hacknplan
 
 
 **Coders, estudem um pouco de rítmica!**
