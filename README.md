@@ -6,8 +6,8 @@ Joguinho de lutinha do gamux
 
 
 *Art Tasks*
-  2. Cenário para testes;
-  3. Bonequinho (dummie) para testes (sprite simples pra testar movimentação e animação do personagem).
+  1. Cenário para testes;
+  2. Bonequinho (dummie) para testes (sprite simples pra testar movimentação e animação do personagem).
 
 *CODE tasks*
   1. Criar um marcador visual/sonoro de tempo (metrônomo) que marca 1 segundo e um botão que se precionado no tempo marcado printa 1 e se precionado no tempo errado printa 0;
