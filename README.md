@@ -6,3 +6,7 @@ Joguinho de lutinha do gamux
 
 *Tasks serão adicionadas no readme e no hacknplan*
   1. Criar um marcador visual/sonoro de tempo (metrônomo) que marca 1 segundo e um botão que se precionado no tempo marcado printa 1 e se precionado no tempo errado printa 0
+
+
+** Coders, estudem um pouco de rítmica! **
+- https://www.descomplicandoamusica.com/ritmo-teoria/
