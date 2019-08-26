@@ -8,6 +8,8 @@ var rythm_threshold_timer = Timer.new()
 
 var press_time = false
 
+onready var character = $Character
+
 func _ready():
 	# Definir e adicionar estilos (cores) para os painéis
 	var background_style = StyleBoxFlat.new()
@@ -23,20 +25,22 @@ func _ready():
 	signal_panel.update()
 	
 	# Definir o ritmo do jogo
-	rythm_timer.set_wait_time(1)
+	rythm_timer.set_wait_time(0.8)
 	rythm_timer.connect("timeout", self, "_on_rythm_timeout")
 	add_child(rythm_timer)
 	rythm_timer.start()
 	
 	# Definir o limite de reação do usuário
-	rythm_threshold_timer.set_wait_time(0.5)
+	rythm_threshold_timer.set_wait_time(0.4)
 	rythm_threshold_timer.connect("timeout", self, "_on_threshold_timeout")
 	add_child(rythm_threshold_timer)
 
 func _input(event):
+	# Fazer o personagem pular caso o jogador acerte
 	if event.is_action_pressed("ui_accept"):
 		if press_time:
 			print("HIT!")
+			character.jump()
 		else:
 			print("NO!")
 
