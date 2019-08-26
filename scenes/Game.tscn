@@ -11,12 +11,19 @@ script = ExtResource( 1 )
 margin_right = 1030.0
 margin_bottom = 600.0
 
-[node name="Signal" type="Panel" parent="."]
+[node name="RythmSignal" type="Panel" parent="."]
 visible = false
 margin_left = 430.0
 margin_top = 210.0
 margin_right = 580.0
 margin_bottom = 360.0
+
+[node name="SetbackSignal" type="Panel" parent="."]
+visible = false
+margin_left = 480.0
+margin_top = 260.0
+margin_right = 530.0
+margin_bottom = 310.0
 
 [node name="Character" parent="." instance=ExtResource( 2 )]
 position = Vector2( 70, 340 )
