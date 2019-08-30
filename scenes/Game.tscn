@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://scenes/Characters/Character.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/Floor.tscn" type="PackedScene" id=3]
+[ext_resource path="res://resource/click.wav" type="AudioStream" id=4]
+[ext_resource path="res://resource/beep.wav" type="AudioStream" id=5]
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 1 )
@@ -30,3 +32,11 @@ position = Vector2( 230, 920 )
 
 [node name="Floor" parent="." instance=ExtResource( 3 )]
 position = Vector2( 1010, 1070 )
+
+[node name="SoundNodes" type="Node" parent="."]
+
+[node name="Rythm" type="AudioStreamPlayer" parent="SoundNodes"]
+stream = ExtResource( 4 )
+
+[node name="Setback" type="AudioStreamPlayer" parent="SoundNodes"]
+stream = ExtResource( 5 )

@@ -3,6 +3,8 @@ extends Node2D
 onready var background_panel = $Background
 onready var rythm_signal_panel = $RythmSignal
 onready var setback_signal_panel = $SetbackSignal
+onready var rythm_sound_node = $SoundNodes/Rythm
+onready var setback_sound_node = $SoundNodes/Setback
 
 export var bpm = 80
 var game_time = 0
@@ -40,9 +42,13 @@ func rythm_update():
 	if rythm_time <= 0.5:
 		press_time = true
 		rythm_signal_panel.show()
+		if not rythm_sound_node.playing:
+			rythm_sound_node.play()
 	elif rythm_time > 0.625 and rythm_time < 0.875:
 		press_time = true
 		setback_signal_panel.show()
+		if not setback_sound_node.playing:
+			setback_sound_node.play()
 	else:
 		press_time = false
 		p1_pressed = false

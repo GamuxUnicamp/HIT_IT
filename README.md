@@ -10,10 +10,11 @@ Joguinho de lutinha do Gamux
 - [ ] Bonequinho (dummie) para testes (sprite simples pra testar movimentação e animação do personagem)
 
 *CODE tasks*
-- [x] Criar um marcador visual/sonoro de tempo (metrônomo) que marca 1 segundo e um botão que se precionado no tempo marcado printa 1 e se precionado no tempo errado printa 0
-- [ ] Colocar um quadrado pulando quando o usuário acertar o tempo do metrônomo
-- [ ] Metrônomo 2.0: marcar o contra-tempo (entre dois tempos certos, mas bem menor)
-- [ ] Efeito de som no metrônomo
+- [x] Criar um marcador visual/sonoro de tempo (metrônomo) que marca 1 segundo e um botão que se pressionado no tempo marcado printa 1 e se pressionado no tempo errado printa 0
+- [x] Colocar um quadrado pulando quando o usuário acertar o tempo do metrônomo
+- [x] Metrônomo 2.0: marcar o contra-tempo (entre dois tempos certos, mas bem menor)
+- [x] Efeito de som no metrônomo
+- [ ] Implementar barras de vida
 
 *SOUND Tasks*
 - [x] Nenhum por enquanto :)
