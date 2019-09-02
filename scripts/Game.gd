@@ -32,26 +32,39 @@ func _ready():
 	setback_signal_panel.update()
 
 func _process(delta):
-	game_time += delta
-	rythm_update()
+	game_time += delta # Relógio do jogo
+	rythm_update() # Atualiza o ritmo do jogo
 
 func rythm_update():
+	# Porcentagem entre uma batida e outra
 	var rythm_time = fmod(game_time, 60.0/bpm)/(60.0/bpm)
 	
+	# Definir o delay da música, para sincronizar com o metrônomo
+	if not $SoundNodes/Music.playing and game_time >= 0.5:
+		$SoundNodes/Music.play()
+	
 	# Ligar press_time no tempo e no contratempo
-	if rythm_time <= 0.5:
+	if rythm_time <= 0.5: # Tempo
 		press_time = true
-		rythm_signal_panel.show()
-		if not rythm_sound_node.playing:
+		rythm_signal_panel.show() # Mostra quadrado branco
+		if rythm_sound_node.visible:
 			rythm_sound_node.play()
-	elif rythm_time > 0.625 and rythm_time < 0.875:
+			rythm_sound_node.hide()
+			
+	elif rythm_time > 0.625 and rythm_time < 0.875: # Contratempo
 		press_time = true
-		setback_signal_panel.show()
-		if not setback_sound_node.playing:
+		setback_signal_panel.show() # Mostra quadrado azul
+		if setback_sound_node.visible:
 			setback_sound_node.play()
+			setback_sound_node.hide()
 	else:
+		# Reiniciar objetos para a próxima batida
 		press_time = false
 		p1_pressed = false
 		p2_pressed = false
+		rythm_sound_node.show()
+		setback_sound_node.show()
+		
+		# Esconder os quadrados quando não for tempo nem contratempo
 		rythm_signal_panel.hide()
 		setback_signal_panel.hide()
