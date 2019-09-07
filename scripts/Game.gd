@@ -1,59 +1,70 @@
 extends Node2D
 
 onready var background_panel = $Background
-onready var signal_panel = $Signal
+onready var rythm_signal_panel = $RythmSignal
+onready var setback_signal_panel = $SetbackSignal
+onready var rythm_sound_node = $SoundNodes/Rythm
+onready var setback_sound_node = $SoundNodes/Setback
 
-var rythm_timer = Timer.new()
-var rythm_threshold_timer = Timer.new()
+export var bpm = 80
+var game_time = 0
 
 var press_time = false
+var p1_pressed = false
+var p2_pressed = false
 
 func _ready():
 	# Definir e adicionar estilos (cores) para os painéis
 	var background_style = StyleBoxFlat.new()
-	var signal_style = StyleBoxFlat.new()
+	var rythm_signal_style = StyleBoxFlat.new()
+	var setback_signal_style = StyleBoxFlat.new()
 	
 	background_style.set_bg_color(Color(0,0,0))
-	signal_style.set_bg_color(Color(1,1,1))
+	rythm_signal_style.set_bg_color(Color(1,1,1))
+	setback_signal_style.set_bg_color(Color(0,0,.75))
 	
 	background_panel.add_stylebox_override("panel", background_style)
-	signal_panel.add_stylebox_override("panel", signal_style)
+	rythm_signal_panel.add_stylebox_override("panel", rythm_signal_style)
+	setback_signal_panel.add_stylebox_override("panel", setback_signal_style)
 	
 	background_panel.update()
-	signal_panel.update()
-	
-	# Definir o ritmo do jogo
-	rythm_timer.set_wait_time(1)
-	rythm_timer.connect("timeout", self, "_on_rythm_timeout")
-	add_child(rythm_timer)
-	rythm_timer.start()
-	
-	# Definir o limite de reação do usuário
-	rythm_threshold_timer.set_wait_time(0.5)
-	rythm_threshold_timer.connect("timeout", self, "_on_threshold_timeout")
-	add_child(rythm_threshold_timer)
+	rythm_signal_panel.update()
+	setback_signal_panel.update()
 
-func _input(event):
-	if event.is_action_pressed("ui_accept"):
-		if press_time:
-			print("HIT!")
-		else:
-			print("NO!")
+func _process(delta):
+	game_time += delta # Relógio do jogo
+	rythm_update() # Atualiza o ritmo do jogo
 
-func _on_rythm_timeout():
-	# Exibir o quadrado branco
-	signal_panel.show()
+func rythm_update():
+	# Porcentagem entre uma batida e outra
+	var rythm_time = fmod(game_time, 60.0/bpm)/(60.0/bpm)
 	
-	# O jogador deve reagir
-	press_time = true
+	# Definir o delay da música, para sincronizar com o metrônomo
+	if not $SoundNodes/Music.playing and game_time >= 0.5:
+		$SoundNodes/Music.play()
 	
-	# Começar a contagem do ritmo e do limite de reação
-	rythm_timer.start()
-	rythm_threshold_timer.start()
-
-func _on_threshold_timeout():
-	# Esconder o quadrado branco
-	signal_panel.hide()
-	
-	# O jogador não deve mais pressionar
-	press_time = false
+	# Ligar press_time no tempo e no contratempo
+	if rythm_time <= 0.5: # Tempo
+		press_time = true
+		rythm_signal_panel.show() # Mostra quadrado branco
+		if rythm_sound_node.visible:
+			rythm_sound_node.play()
+			rythm_sound_node.hide()
+			
+	elif rythm_time > 0.625 and rythm_time < 0.875: # Contratempo
+		press_time = true
+		setback_signal_panel.show() # Mostra quadrado azul
+		if setback_sound_node.visible:
+			setback_sound_node.play()
+			setback_sound_node.hide()
+	else:
+		# Reiniciar objetos para a próxima batida
+		press_time = false
+		p1_pressed = false
+		p2_pressed = false
+		rythm_sound_node.show()
+		setback_sound_node.show()
+		
+		# Esconder os quadrados quando não for tempo nem contratempo
+		rythm_signal_panel.hide()
+		setback_signal_panel.hide()
