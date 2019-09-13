@@ -36,6 +36,14 @@ func _process(delta):
 	game_time += delta # Relógio do jogo
 	rythm_update() # Atualiza o ritmo do jogo
 	
+	# Definir o delay da música, para sincronizar com o metrônomo
+	if not $SoundNodes/Music.playing and game_time >= 0.5:
+		$SoundNodes/Music.play()
+
+func _input(event):
+	# Se não for um botão apertado, retornar
+	if not event is InputEventKey: return
+	
 	# Checa se os jogadores pressionaram um botão
 	p[0].input()
 	p[1].input()
@@ -43,10 +51,6 @@ func _process(delta):
 func rythm_update():
 	# Porcentagem entre uma batida e outra
 	var rythm_time = fmod(game_time, 60.0/bpm)/(60.0/bpm)
-	
-	# Definir o delay da música, para sincronizar com o metrônomo
-	if not $SoundNodes/Music.playing and game_time >= 0.5:
-		$SoundNodes/Music.play()
 	
 	# Ligar press_time no tempo e no contratempo
 	if rythm_time <= 0.5: # Tempo

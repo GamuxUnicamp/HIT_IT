@@ -23,7 +23,7 @@ func update_health(new_health, player):
 	elif player == 2:
 		tween.interpolate_property(self, "animated_health_2", animated_health_2, new_health, 0.5, tween.TRANS_LINEAR, Tween.EASE_IN)
 	
-	# Começa a animação da vida
+	# Inicia a animação
 	tween.start()
 
 
