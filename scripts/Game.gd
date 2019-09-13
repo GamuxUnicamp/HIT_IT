@@ -10,8 +10,9 @@ export var bpm = 80
 var game_time = 0
 
 var press_time = false
-var p1_pressed = false
-var p2_pressed = false
+var pressed = [false,false]
+
+onready var p = [$Player_1, $Player_2]
 
 func _ready():
 	# Definir e adicionar estilos (cores) para os painéis
@@ -34,6 +35,10 @@ func _ready():
 func _process(delta):
 	game_time += delta # Relógio do jogo
 	rythm_update() # Atualiza o ritmo do jogo
+	
+	# Checa se os jogadores pressionaram um botão
+	p[0].input()
+	p[1].input()
 
 func rythm_update():
 	# Porcentagem entre uma batida e outra
@@ -60,8 +65,7 @@ func rythm_update():
 	else:
 		# Reiniciar objetos para a próxima batida
 		press_time = false
-		p1_pressed = false
-		p2_pressed = false
+		pressed = [false, false]
 		rythm_sound_node.show()
 		setback_sound_node.show()
 		
