@@ -7,10 +7,13 @@ onready var rythm_sound_node = $SoundNodes/Rythm
 onready var setback_sound_node = $SoundNodes/Setback
 
 export var bpm = 80
-var game_time = 0
+var game_time = 0.0
+var combo_count = 1
 
 var press_time = false
 var pressed = [false,false]
+var executed = [false, false, false, false]
+var step = 0
 
 onready var p = [$Player_1, $Player_2]
 
@@ -34,10 +37,10 @@ func _ready():
 
 func _process(delta):
 	game_time += delta # Relógio do jogo
-	rythm_update() # Atualiza o ritmo do jogo
+	rythm_check() # Atualiza o ritmo do jogo
 	
 	# Definir o delay da música, para sincronizar com o metrônomo
-	if not $SoundNodes/Music.playing and game_time >= 0.5:
+	if not $SoundNodes/Music.playing and game_time > 0.0:
 		$SoundNodes/Music.play()
 
 func _input(event):
@@ -48,31 +51,97 @@ func _input(event):
 	p[0].input()
 	p[1].input()
 
-func rythm_update():
+func rythm_check():
 	# Porcentagem entre uma batida e outra
 	var rythm_time = fmod(game_time, 60.0/bpm)/(60.0/bpm)
 	
-	# Ligar press_time no tempo e no contratempo
 	if rythm_time <= 0.5: # Tempo
-		press_time = true
-		rythm_signal_panel.show() # Mostra quadrado branco
-		if rythm_sound_node.visible:
-			rythm_sound_node.play()
-			rythm_sound_node.hide()
+		step = 0
+	elif rythm_time <= 0.625: # Miss
+		step = 1
+	elif rythm_time < 0.875: # Contratempo
+		step = 2
+	elif rythm_time <= 1.0: # Miss
+		step = 3
+	
+	if executed[step]: return
+	
+	rythm_update(step)
+
+func rythm_update(step):
+	match step:
+		0: # Tempo
+			combo_count += 1
+			press_time = true
+			rythm_signal_panel.show() # Mostra quadrado branco
+			if rythm_sound_node.visible:
+				rythm_sound_node.play()
+				rythm_sound_node.hide()
+				
+			executed = [true, false, false, false]
 			
-	elif rythm_time > 0.625 and rythm_time < 0.875: # Contratempo
-		press_time = true
-		setback_signal_panel.show() # Mostra quadrado azul
-		if setback_sound_node.visible:
-			setback_sound_node.play()
-			setback_sound_node.hide()
-	else:
-		# Reiniciar objetos para a próxima batida
-		press_time = false
-		pressed = [false, false]
-		rythm_sound_node.show()
-		setback_sound_node.show()
-		
-		# Esconder os quadrados quando não for tempo nem contratempo
-		rythm_signal_panel.hide()
-		setback_signal_panel.hide()
+		1: # Fail
+			# Contabilizar os combos de ambos jogadores
+			check_combos()
+			
+			# Reiniciar objetos para a próxima batida
+			press_time = false
+			pressed = [false, false]
+			rythm_sound_node.show()
+			setback_sound_node.show()
+			
+			# Esconder os quadrados quando não for tempo nem contratempo
+			rythm_signal_panel.hide()
+			setback_signal_panel.hide()
+			
+			executed = [true, true, false, false]
+				
+		2: # Contratempo
+			press_time = true
+			setback_signal_panel.show() # Mostra quadrado azul
+			if setback_sound_node.visible:
+				setback_sound_node.play()
+				setback_sound_node.hide()
+			
+			executed = [true, true, true, false]
+				
+		3: # Fail
+			# Contabilizar os combos de ambos jogadores
+			check_combos()
+			
+			# Reiniciar objetos para a próxima batida
+			press_time = false
+			pressed = [false, false]
+			rythm_sound_node.show()
+			setback_sound_node.show()
+			
+			# Esconder os quadrados quando não for tempo nem contratempo
+			rythm_signal_panel.hide()
+			setback_signal_panel.hide()
+			
+			executed = [false, true, true, true]
+
+func check_combos():
+	for i in range(2):
+		var combo = p[i].combo
+		if combo != [-1]:
+			 # Marcar pausa, se necessário
+			if not pressed[i]:
+				combo.append(p[i].PAUSE)
+			
+			# Combo break
+			if combo.size() > 2:
+				# Contar quantos pauses seguidos
+				var pause_count = 0
+				for j in range(0, combo.size(), 2): # Checa apenas o tempo (índices pares)
+					if combo[j] == p[i].PAUSE:
+						pause_count += 1
+						if pause_count > 1:
+							p[i].combo = [-1]
+							break
+	if combo_count == 6:
+		combo_count = 1
+		print(p[0].combo)
+		print(p[1].combo)
+		p[0].combo = []
+		p[1].combo = []

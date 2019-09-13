@@ -11,6 +11,9 @@ var mistake_damage = 10
 signal health_reduced
 signal died
 
+enum { PAUSE, HIT }
+var combo = []
+
 onready var game = get_parent()
 
 func _ready():
@@ -29,24 +32,25 @@ func _physics_process(delta):
 func input():
 	# Sai da função se não apertar uma tecla relevante
 	if index == 1:
-		if not (Input.is_action_just_pressed("punchP1") or Input.is_action_just_pressed("kickP1") or Input.is_action_just_pressed("espP1")):
+		if not (Input.is_action_just_pressed("punchP1") or Input.is_action_just_pressed("kickP1")):
 			return
 	elif index == 2:
-		if not (Input.is_action_just_pressed("punchP2") or Input.is_action_just_pressed("kickP2") or Input.is_action_just_pressed("espP2")):
+		if not (Input.is_action_just_pressed("punchP2") or Input.is_action_just_pressed("kickP2")):
 			return
+	
+	# Retornar se o jogador já tiver errado o combo
+	if combo == [-1]: return
 
 	# Fazer o personagem pular caso o jogador acerte e receber dano caso erre
 	if game.press_time:
 		if not game.pressed[index-1]:
-			print(str(index) + ": HIT!")
 			game.pressed[index-1] = true
+			combo.append(HIT)
 			jump()
 		else:
-			print(str(index) + ": NO!")
-			take_damage()
+			combo = [-1]
 	else:
-		print(str(index) + ": NO!")
-		take_damage()
+		combo = [-1]
 
 # Se o jogador estiver no chão, aplicar uma força vertical
 func jump():
