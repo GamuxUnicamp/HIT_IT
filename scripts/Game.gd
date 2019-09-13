@@ -13,6 +13,14 @@ var press_time = false
 var p1_pressed = false
 var p2_pressed = false
 
+var acertou=[0,0]
+var rodada=0
+
+signal lose1
+signal lose2
+signal half_lose1
+signal half_lose2
+
 func _ready():
 	# Definir e adicionar estilos (cores) para os painéis
 	var background_style = StyleBoxFlat.new()
@@ -30,7 +38,11 @@ func _ready():
 	background_panel.update()
 	rythm_signal_panel.update()
 	setback_signal_panel.update()
-
+	
+	connect("lose1",$Player_1,"take_damage_by_lose")
+	connect("lose2",$Player_2,"take_damage_by_lose")
+	connect("half_lose1",$Player_1,"take_damage_by_draw")
+	connect("half_lose2",$Player_2,"take_damage_by_draw")
 func _process(delta):
 	game_time += delta # Relógio do jogo
 	rythm_update() # Atualiza o ritmo do jogo
@@ -46,11 +58,15 @@ func rythm_update():
 	# Ligar press_time no tempo e no contratempo
 	if rythm_time <= 0.5: # Tempo
 		press_time = true
+		rodada=1
 		rythm_signal_panel.show() # Mostra quadrado branco
 		if rythm_sound_node.visible:
 			rythm_sound_node.play()
 			rythm_sound_node.hide()
-			
+	
+	elif rodada==1:
+		rodada=0
+		comparacao()
 	elif rythm_time > 0.625 and rythm_time < 0.875: # Contratempo
 		press_time = true
 		setback_signal_panel.show() # Mostra quadrado azul
@@ -65,6 +81,22 @@ func rythm_update():
 		rythm_sound_node.show()
 		setback_sound_node.show()
 		
+		
 		# Esconder os quadrados quando não for tempo nem contratempo
 		rythm_signal_panel.hide()
 		setback_signal_panel.hide()
+		
+		
+func comparacao():
+	print("comparou")
+	if acertou[0]<acertou[1]:
+		
+		emit_signal("lose1")
+		print("lose1")
+	elif acertou[1]<acertou[0]:
+		emit_signal("lose2")
+	elif acertou[0]==0:
+		emit_signal("half_lose1")
+		emit_signal("half_lose2")
+func refresh_acertos(player):
+	acertou[player-1]=1
