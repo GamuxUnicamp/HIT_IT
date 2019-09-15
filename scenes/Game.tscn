@@ -1,12 +1,14 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://scripts/Game.gd" type="Script" id=1]
 [ext_resource path="res://scenes/Characters/Character.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scenes/Floor.tscn" type="PackedScene" id=3]
 [ext_resource path="res://resource/sound/MUSICA_SP.wav" type="AudioStream" id=4]
 [ext_resource path="res://scripts/GUI.gd" type="Script" id=5]
-[ext_resource path="res://resource/sprites/hp_bar_edge.png" type="Texture" id=6]
-[ext_resource path="res://resource/sprites/hp_bar_texture.png" type="Texture" id=7]
+[ext_resource path="res://resource/sprites/gui/hp_bar_edge_1.png" type="Texture" id=6]
+[ext_resource path="res://resource/sprites/gui/hp_bar_texture_1.png" type="Texture" id=7]
+[ext_resource path="res://resource/sprites/gui/hp_bar_edge_2.png" type="Texture" id=8]
+[ext_resource path="res://resource/sprites/gui/hp_bar_texture_2.png" type="Texture" id=9]
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 1 )
@@ -81,8 +83,8 @@ margin_right = 1920.0
 margin_bottom = 100.0
 step = 0.01
 value = 100.0
-texture_under = ExtResource( 6 )
-texture_progress = ExtResource( 7 )
+texture_under = ExtResource( 8 )
+texture_progress = ExtResource( 9 )
 fill_mode = 1
 
 [node name="Tween" type="Tween" parent="GUI"]

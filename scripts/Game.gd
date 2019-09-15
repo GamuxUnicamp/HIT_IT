@@ -1,20 +1,19 @@
 extends Node2D
 
+export var bpm = 80
+
+var combo_count = 1
+var executed = [false, false, false, false]
+var game_time = 0.0
+var press_time = false
+var pressed = [false,false]
+var step = 0
+
 onready var background_panel = $Background
 onready var rythm_signal_panel = $RythmSignal
 onready var setback_signal_panel = $SetbackSignal
 onready var rythm_sound_node = $SoundNodes/Rythm
 onready var setback_sound_node = $SoundNodes/Setback
-
-export var bpm = 80
-var game_time = 0.0
-var combo_count = 1
-
-var press_time = false
-var pressed = [false,false]
-var executed = [false, false, false, false]
-var step = 0
-
 onready var p = [$Player_1, $Player_2]
 
 func _ready():
@@ -65,7 +64,6 @@ func rythm_check():
 		step = 3
 	
 	if executed[step]: return
-	
 	rythm_update(step)
 
 func rythm_update(step):
@@ -81,8 +79,10 @@ func rythm_update(step):
 			executed = [true, false, false, false]
 			
 		1: # Fail
-			# Contabilizar os combos de ambos jogadores
-			check_combos()
+			# Marcar pausa, se necessário
+			for i in range(2):
+				if p[i].combo != [-1] and not pressed[i]:
+					p[i].combo.append(p[i].PAUSE)
 			
 			# Reiniciar objetos para a próxima batida
 			press_time = false
@@ -106,6 +106,11 @@ func rythm_update(step):
 			executed = [true, true, true, false]
 				
 		3: # Fail
+			# Marcar pausa, se necessário
+			for i in range(2):
+				if p[i].combo != [-1] and not pressed[i]:
+					p[i].combo.append(p[i].PAUSE)
+			
 			# Contabilizar os combos de ambos jogadores
 			check_combos()
 			
@@ -122,26 +127,24 @@ func rythm_update(step):
 			executed = [false, true, true, true]
 
 func check_combos():
+	# Combo break
 	for i in range(2):
-		var combo = p[i].combo
-		if combo != [-1]:
-			 # Marcar pausa, se necessário
-			if not pressed[i]:
-				combo.append(p[i].PAUSE)
-			
-			# Combo break
-			if combo.size() > 2:
-				# Contar quantos pauses seguidos
-				var pause_count = 0
-				for j in range(0, combo.size(), 2): # Checa apenas o tempo (índices pares)
-					if combo[j] == p[i].PAUSE:
-						pause_count += 1
-						if pause_count > 1:
-							p[i].combo = [-1]
-							break
+		if p[i].combo != [-1] and p[i].combo.size() > 2:
+			# Contar quantos pauses seguidos
+			var pause_count = 0
+			for j in range(0, p[i].combo.size(), 2): # Checa apenas o tempo (índices pares)
+				if p[i].combo[j] == p[i].PAUSE:
+					pause_count += 1
+					if pause_count > 2:
+						p[i].combo = [-1]
+						print(str(i+1) + ": COMBO BREAK!")
+						break
+	
 	if combo_count == 6:
 		combo_count = 1
-		print(p[0].combo)
-		print(p[1].combo)
+		
+		print("Combo 1: " + str(p[0].combo))
+		print("Combo 2: " + str(p[1].combo))
+		
 		p[0].combo = []
 		p[1].combo = []

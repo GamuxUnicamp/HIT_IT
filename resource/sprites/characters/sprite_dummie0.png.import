@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/hp_bar_edge.png-ca5b08d3a0301ec20d56cde953e21fa4.stex"
+path="res://.import/sprite_dummie0.png-c02bc644f7f1ca12c23080eea6270b91.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resource/sprites/hp_bar_edge.png"
-dest_files=[ "res://.import/hp_bar_edge.png-ca5b08d3a0301ec20d56cde953e21fa4.stex" ]
+source_file="res://resource/sprites/characters/sprite_dummie0.png"
+dest_files=[ "res://.import/sprite_dummie0.png-c02bc644f7f1ca12c23080eea6270b91.stex" ]
 
 [params]
 
