@@ -28,4 +28,9 @@ func update_health(new_health, player):
 
 
 func player_died(index):
+	if index == 1:
+		print("Vencedor: Jogador 2")
+	else:
+		print("Vencedor: Jogador 1")
+	
 	get_tree().quit()

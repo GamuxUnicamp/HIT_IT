@@ -1,12 +1,12 @@
 extends KinematicBody2D
 
-enum { PAUSE, PUNCH, KICK, SPECIAL }
+enum { PAUSE, HIT }
 
 export var index = 1
 
 var combo = []
 var health = 100
-var mistake_damage = 10
+var attacking = false
 
 var speed = 200
 onready var target = position
@@ -38,24 +38,12 @@ func _physics_process(delta):
 		velocity = move_and_slide(velocity)
 
 func input():
-	var move
 	if index == 1:
-		if Input.is_action_just_pressed("punchP1"):
-			move = PUNCH
-		elif Input.is_action_just_pressed("kickP1"):
-			move = KICK
-		
-		# Sai da função se não apertar uma tecla relevante
-		else: return
+		if not Input.is_action_just_pressed("punchP1"):
+			return
 	elif index == 2:
-		if Input.is_action_just_pressed("punchP2"):
-			move = PUNCH
-		elif Input.is_action_just_pressed("kickP2"):
-			move = KICK
-		
-		# Sai da função se não apertar uma tecla relevante
-		else: return
-	else: return
+		if not Input.is_action_just_pressed("punchP2"):
+			return
 	
 	# Retornar se o jogador já tiver errado o combo
 	if combo == [-1]: return
@@ -64,9 +52,9 @@ func input():
 	if game.press_time:
 		if not game.pressed[index-1]:
 			game.pressed[index-1] = true
-			combo.append(move)
+			combo.append(HIT)
 			print(str(index) + ": HIT!")
-			attack(move)
+			move()
 		else:
 			combo = [-1]
 			print(str(index) + ": DOUBLE CLICK!")
@@ -75,21 +63,23 @@ func input():
 		print(str(index) + ": WRONG TIME!")
 
 # Se o jogador estiver no chão, aplicar uma força vertical
-func attack(move):
-	var colliding_bodies = detector.get_overlapping_bodies()
-	
-	if colliding_bodies == []:
+func move():
+	if not colliding():
 		if index == 1:
 			target = position + Vector2(100, 0)
 		elif index == 2:
 			target = position - Vector2(100, 0)
-	else:
-		for body in colliding_bodies:
-			if body.is_in_group("player"):
-				body.take_damage()
 
-func take_damage():
-	health -= mistake_damage
+func colliding():
+	var colliding_bodies = detector.get_overlapping_bodies()
+	
+	if colliding_bodies == []:
+		return false
+	else:
+		return true
+
+func take_damage(damage):
+	health -= damage
 	emit_signal("health_reduced", health, index)
 	if health <= 0:
 		emit_signal("died", index)

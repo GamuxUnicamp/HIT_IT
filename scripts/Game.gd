@@ -8,6 +8,7 @@ var game_time = 0.0
 var press_time = false
 var pressed = [false,false]
 var step = 0
+var count_draw = 0
 
 onready var background_panel = $Background
 onready var rythm_signal_panel = $RythmSignal
@@ -15,6 +16,7 @@ onready var setback_signal_panel = $SetbackSignal
 onready var rythm_sound_node = $SoundNodes/Rythm
 onready var setback_sound_node = $SoundNodes/Setback
 onready var p = [$Player_1, $Player_2]
+onready var timer = $Timer
 
 func _ready():
 	# Definir e adicionar estilos (cores) para os painéis
@@ -33,14 +35,26 @@ func _ready():
 	background_panel.update()
 	rythm_signal_panel.update()
 	setback_signal_panel.update()
+	
+	# Define quem começa atacando
+	randomize()
+	p[floor(rand_range(0,2))].attacking = true
 
 func _process(delta):
 	game_time += delta # Relógio do jogo
 	rythm_check() # Atualiza o ritmo do jogo
 	
 	# Definir o delay da música, para sincronizar com o metrônomo
-	if not $SoundNodes/Music.playing and game_time > 0.0:
-		$SoundNodes/Music.play()
+	if not $SoundNodes/Music.playing:
+		if p[0].health < p[1].health:
+			print("Vencedor: Jogador 2")
+		elif p[0].health > p[1].health:
+			print("Vencedor: Jogador 1")
+		else:
+			print("Empate!")
+		
+		get_tree().quit()
+		self.set_process(false)
 
 func _input(event):
 	# Se não for um botão apertado, retornar
@@ -77,6 +91,7 @@ func rythm_update(step):
 				rythm_sound_node.hide()
 				
 			executed = [true, false, false, false]
+			
 			
 		1: # Fail
 			# Marcar pausa, se necessário
@@ -135,10 +150,12 @@ func check_combos():
 			for j in range(0, p[i].combo.size(), 2): # Checa apenas o tempo (índices pares)
 				if p[i].combo[j] == p[i].PAUSE:
 					pause_count += 1
-					if pause_count > 2:
+					if pause_count >= 2:
 						p[i].combo = [-1]
 						print(str(i+1) + ": COMBO BREAK!")
 						break
+				else:
+					pause_count = 0
 	
 	if combo_count == 6:
 		combo_count = 1
@@ -146,5 +163,76 @@ func check_combos():
 		print("Combo 1: " + str(p[0].combo))
 		print("Combo 2: " + str(p[1].combo))
 		
+		check_damage(p[0].combo, p[1].combo)
+		
 		p[0].combo = []
 		p[1].combo = []
+
+func check_damage(p1_combo, p2_combo):
+	var attacking
+	var defending
+	var att_points
+	var def_points
+	
+	if p[0].attacking:
+		attacking = 0
+		defending = 1
+		att_points = combo_damage(p1_combo)
+		def_points = combo_damage(p2_combo)
+	else:
+		attacking = 1
+		defending = 0
+		att_points = combo_damage(p2_combo)
+		def_points = combo_damage(p1_combo)
+	
+	if att_points > def_points:
+		if p[attacking].colliding():
+			p[defending].take_damage(att_points)
+			print("Player " + str(attacking+1) + " attacked! (" + str(att_points) + " damage)")
+	
+	else:
+		count_draw += 1
+		if not count_draw > 2:
+			return
+	
+	p[attacking].attacking = false
+	p[defending].attacking = true
+	count_draw = 0
+
+func combo_damage(full_combo):
+	if full_combo == [-1]:
+		return 0
+	
+	var rythm_combo = []
+	for i in range(0,len(full_combo), 2):
+		rythm_combo.append(full_combo[i])
+	
+	var count_setback = 0
+	for i in range(1,len(full_combo), 2):
+		if full_combo[i] == p[0].HIT:
+			count_setback += 1
+	
+	match rythm_combo:
+		[0,1,0,1,0]:
+			return 2 * (1 + count_setback*0.25)
+		
+		[1,0,1,0,1]:
+			return 3 * (1 + count_setback*0.25)
+		
+		[0,1,1,1,1], [1,1,1,1,0]:
+			return 4 * (1 + count_setback*0.25)
+		
+		[1, 1, 1, 1, 1]:
+			return 5 * (1 + count_setback*0.25)
+		
+		[0,1,0,1,1], [0,1,1,0,1], [1,0,1,1,0], [1,1,0,1,0]:
+			return 6 * (1 + count_setback*0.25)
+		
+		[1,1,0,1,1]:
+			return 10 * (1 + count_setback*0.25)
+		
+		[0,1,1,1,0]:
+			return 11 * (1 + count_setback*0.25)
+		
+		[1,0,1,1,1], [1,1,1,0,1]:
+			return 12 * (1 + count_setback*0.25)
